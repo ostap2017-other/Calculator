@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Calc // CodeByOstap</title>
+
+  <!-- шрифт (потрібен інтернет) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===== кольори (чорно-зелена тема) ===== */
+    /* ===== ТЕМИ: міняються тільки змінні ===== */
+    :root, [data-theme="blue"] {
+      --accent: #2f6bff;  --rgb: 47, 107, 255;  --accent-soft: #3a63d8;
+      --bg: #f1f6ff;  --card: #ffffff;  --key: #eef4ff;  --line: #d2e1ff;
+      --text: #16264a;  --muted: #8aa0c6;
+      --screen: #f6f9ff;  --op: #e0eaff;  --press: #d3e1ff;
+      --eq-hover: #5a89ff;  --eq-text: #ffffff;  --danger: #e11d48;
+      --accent-text: var(--accent);
+    }
+    [data-theme="pink"] {
+      --accent: #ff4f9a;  --rgb: 255, 79, 154;  --accent-soft: #e0508d;
+      --bg: #fff4f9;  --card: #ffffff;  --key: #fff0f6;  --line: #ffd3e6;
+      --text: #4a2338;  --muted: #c08aa4;
+      --screen: #fff8fc;  --op: #ffe3ef;  --press: #ffd9ea;
+      --eq-hover: #ff72b0;  --eq-text: #ffffff;
+    }
+    [data-theme="green"] {
+      --accent: #12b25b;  --rgb: 18, 178, 91;  --accent-soft: #0f8f4a;
+      --bg: #effcf4;  --card: #ffffff;  --key: #eafaf1;  --line: #c9ecd7;
+      --text: #12352a;  --muted: #7fae98;
+      --screen: #f5fdf8;  --op: #dcf5e6;  --press: #c8efd8;
+      --eq-hover: #34c779;  --eq-text: #ffffff;
+    }
+    [data-theme="red"] {
+      --accent: #e11d2e;  --rgb: 225, 29, 46;  --accent-soft: #c01526;
+      --bg: #fff3f3;  --card: #ffffff;  --key: #fff0f0;  --line: #ffd0d3;
+      --text: #3d1115;  --muted: #c28b90;
+      --screen: #fff8f8;  --op: #ffe1e3;  --press: #ffd3d6;
+      --eq-hover: #ff4a58;  --eq-text: #ffffff;
+    }
+    [data-theme="orange"] {
+      --accent: #ff7a1a;  --rgb: 255, 122, 26;  --accent-soft: #e0610a;
+      --bg: #fff6ee;  --card: #ffffff;  --key: #fff1e4;  --line: #ffd9bb;
+      --text: #4a2a10;  --muted: #c49a78;
+      --screen: #fffaf5;  --op: #ffe7d2;  --press: #ffdcc0;
+      --eq-hover: #ff9547;  --eq-text: #ffffff;
+    }
+    [data-theme="yellow"] {
+      --accent: #ffc21a;  --rgb: 255, 194, 26;  --accent-soft: #8f6100;  --accent-text: #a66f00;
+      --bg: #fffbea;  --card: #ffffff;  --key: #fff8dc;  --line: #ffeaa3;
+      --text: #3a2d05;  --muted: #b9a46a;
+      --screen: #fffdf3;  --op: #fff1c2;  --press: #ffe9a0;
+      --eq-hover: #ffd24d;  --eq-text: #2b2100;
+    }
+    [data-theme="purple"] {
+      --accent: #8b5cf6;  --rgb: 139, 92, 246;  --accent-soft: #6d3fe0;
+      --bg: #f6f1ff;  --card: #ffffff;  --key: #f3edff;  --line: #e1d3ff;
+      --text: #2a1a52;  --muted: #a08cc9;
+      --screen: #faf7ff;  --op: #ebe0ff;  --press: #dfd0ff;
+      --eq-hover: #a07bff;  --eq-text: #ffffff;
+    }
+    [data-theme="black"] {
+      --accent: #ffffff;  --rgb: 130, 130, 150;  --accent-soft: #c9c9d4;
+      --bg: #08080b;  --card: #131318;  --key: #1b1b22;  --line: #2a2a34;
+      --text: #f2f2f7;  --muted: #7d7d8c;
+      --screen: #0d0d11;  --op: #22222b;  --press: #2c2c37;
+      --eq-hover: #dcdce4;  --eq-text: #0a0a0e;  --danger: #ff5d6c;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    ::selection { background: var(--accent); color: var(--eq-text); }
+
+    body {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Poppins', system-ui, sans-serif;
+    }
+
+    /* сітка на фоні (статична, без лагів) */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        linear-gradient(rgba(var(--rgb), .09) 1px, transparent 1px) 0 0 / 42px 42px,
+        linear-gradient(90deg, rgba(var(--rgb), .09) 1px, transparent 1px) 0 0 / 42px 42px;
+      -webkit-mask-image: radial-gradient(circle at center, #000 10%, transparent 70%);
+              mask-image: radial-gradient(circle at center, #000 10%, transparent 70%);
+    }
+
+    /* ===== калькулятор ===== */
+    .calc {
+      position: relative;
+      width: min(380px, 100%);
+      padding: 18px 18px 14px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      animation: pop .7s cubic-bezier(.2, 1.2, .4, 1) backwards;
+    }
+    /* м'яке світіння, яке «дихає» */
+    .calc::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      box-shadow: 0 20px 70px rgba(var(--rgb), .28), inset 0 0 0 1px rgba(var(--rgb), .3);
+      pointer-events: none;
+      animation: glow 3.5s ease-in-out infinite alternate;
+    }
+    @keyframes glow { from { opacity: .35; } to { opacity: 1; } }
+    @keyframes pop  { from { opacity: 0; transform: translateY(40px) scale(.92); } }
+
+    /* ===== верхня панель ===== */
+    .bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+    .title { font-size: 14px; font-weight: 700; color: var(--accent-text); }
+    .cursor {
+      display: inline-block;
+      width: 8px; height: 14px;
+      margin-left: 4px;
+      vertical-align: -2px;
+      background: var(--accent);
+      animation: blink 1s steps(1) infinite;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    .icon {
+      padding: 6px 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: transparent;
+      color: var(--muted);
+      font: inherit;
+      font-size: 13px;
+      cursor: pointer;
+      transition: color .2s, border-color .2s, transform .15s;
+    }
+    .icon:hover { color: var(--accent-text); border-color: var(--accent); }
+    .icon:active { transform: scale(.92); }
+
+    /* ===== екран ===== */
+    .screen {
+      padding: 14px 16px;
+      margin-bottom: 14px;
+      background: var(--screen);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+    }
+    .prev {
+      min-height: 18px;
+      font-size: 13px;
+      text-align: right;
+      color: var(--muted);
+      overflow-wrap: anywhere;
+    }
+    .row { display: flex; align-items: flex-end; gap: 10px; }
+    .main {
+      flex: 1;
+      min-height: 52px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-end;
+      text-align: right;
+      font-size: 44px;
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--accent-text);
+      text-shadow: 0 2px 14px rgba(var(--rgb), .3);
+      overflow-wrap: anywhere;
+      transition: font-size .15s;
+    }
+    .main.m { font-size: 34px; }
+    .main.s { font-size: 26px; }
+    .main.xs { font-size: 20px; }
+    .main.err { color: var(--danger); text-shadow: 0 2px 14px rgba(225, 29, 72, .3); }
+    .main.shake { animation: shake .4s; }
+    .main.tick { animation: tick .18s; }
+    @keyframes shake { 20%, 60% { transform: translateX(-8px); } 40%, 80% { transform: translateX(8px); } }
+    @keyframes tick  { from { transform: translateY(4px); opacity: .5; } }
+
+    /* ===== історія (випадає) ===== */
+    .history {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows .35s ease;
+    }
+    .history.open { grid-template-rows: 1fr; }
+    .history > div { overflow: hidden; }
+    .history ul {
+      max-height: 150px;
+      margin-bottom: 8px;
+      overflow-y: auto;
+      list-style: none;
+    }
+    .history li {
+      padding: 8px 10px;
+      margin-bottom: 4px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      font-size: 13px;
+      color: var(--muted);
+      cursor: pointer;
+      transition: border-color .2s, color .2s;
+    }
+    .history li b { color: var(--accent-soft); }
+    .history li:hover { border-color: var(--accent); color: var(--text); }
+    .history .empty { text-align: center; cursor: default; }
+    .clear {
+      display: block;
+      margin: 0 auto 12px;
+      border: 0;
+      background: none;
+      color: var(--muted);
+      font: inherit;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    .clear:hover { color: var(--danger); }
+
+    /* ===== кнопки ===== */
+    .keys {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    .btn {
+      height: 60px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--key);
+      color: var(--text);
+      font: inherit;
+      font-size: 22px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: transform .15s, border-color .2s, box-shadow .2s, background .2s;
+      animation: rise .5s cubic-bezier(.2, .8, .3, 1) backwards;
+      animation-delay: calc(var(--i, 0) * 30ms + .25s);
+    }
+    @keyframes rise { from { opacity: 0; transform: translateY(16px) scale(.85); } }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      border-color: var(--accent);
+      box-shadow: 0 8px 18px -6px rgba(var(--rgb), .55);
+    }
+    .btn:active, .btn.hit { transform: scale(.92); background: var(--press); }
+
+    .btn.op  { color: var(--accent-text); background: var(--op); }
+    .btn.dim { color: var(--accent-soft); font-size: 18px; font-weight: 600; }
+    .btn.zero { grid-column: span 2; }
+    .btn.eq {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--eq-text);
+      font-weight: 800;
+      box-shadow: 0 10px 24px -6px rgba(var(--rgb), .7);
+    }
+    .btn.eq:hover { background: var(--eq-hover); }
+
+    footer {
+      margin-top: 14px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    footer b { color: var(--accent-text); font-weight: 700; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+
+    .spark { color: var(--accent-text); display: inline-block; animation: beat 1.4s ease-in-out infinite; }
+    @keyframes beat { 50% { transform: scale(1.3) rotate(90deg); } }
+
+    /* ===== вибір кольору (палітра) ===== */
+    .tools { display: flex; gap: 8px; }
+    .pal-wrap { position: relative; }
+    .pal { display: grid; place-items: center; padding: 7px 10px; }
+    .cur {
+      display: block;
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 2px var(--card), 0 0 0 3px var(--line);
+    }
+    .picker {
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      z-index: 5;
+      display: grid;
+      grid-template-columns: repeat(4, 28px);
+      gap: 12px;
+      padding: 13px 15px;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: 0 14px 30px rgba(var(--rgb), .25);
+      opacity: 0;
+      transform: translateY(-8px) scale(.9);
+      transform-origin: top right;
+      pointer-events: none;
+      transition: opacity .2s, transform .3s cubic-bezier(.2, 1.4, .4, 1);
+    }
+    .picker.open { opacity: 1; transform: none; pointer-events: auto; }
+    .swatch {
+      width: 28px; height: 28px;
+      border: 0;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .45);
+      transition: transform .2s;
+    }
+    .swatch:hover { transform: scale(1.18); }
+    .swatch.on { outline: 2px solid var(--accent); outline-offset: 3px; }
+    .picker.open .swatch { animation: dotin .35s cubic-bezier(.2, 1.5, .4, 1) backwards; }
+    .picker.open .swatch:nth-child(1) { animation-delay: .04s; }
+    .picker.open .swatch:nth-child(2) { animation-delay: .09s; }
+    .picker.open .swatch:nth-child(3) { animation-delay: .14s; }
+    .picker.open .swatch:nth-child(4) { animation-delay: .19s; }
+    .picker.open .swatch:nth-child(5) { animation-delay: .24s; }
+    .picker.open .swatch:nth-child(6) { animation-delay: .29s; }
+    .picker.open .swatch:nth-child(7) { animation-delay: .34s; }
+    .picker.open .swatch:nth-child(8) { animation-delay: .39s; }
+    @keyframes dotin { from { transform: scale(0); } }
+
+    /* ===== плавна зміна теми без лагів ===== */
+    .fade { position: fixed; inset: 0; z-index: 10; opacity: 0; pointer-events: none; }
+    .switching .calc::before, .switching .spark { animation-play-state: paused; }
+  </style>
+</head>
+<body>
+
+  <div class="fade" id="fade"></div>
+
+  <main class="calc">
+
+    <!-- верхня панель -->
+    <header class="bar">
+      <span class="title">Calculator <span class="spark">&#10022;</span></span>
+      <div class="tools">
+        <div class="pal-wrap">
+          <button class="icon pal" id="palBtn" title="Theme"><i class="cur"></i></button>
+          <div class="picker" id="picker">
+            <button class="swatch" data-t="blue"   style="background:#2f6bff" title="Blue"></button>
+            <button class="swatch" data-t="pink"   style="background:#ff4f9a" title="Pink"></button>
+            <button class="swatch" data-t="red"    style="background:#e11d2e" title="Red"></button>
+            <button class="swatch" data-t="orange" style="background:#ff7a1a" title="Orange"></button>
+            <button class="swatch" data-t="yellow" style="background:#ffc21a" title="Yellow"></button>
+            <button class="swatch" data-t="green"  style="background:#12b25b" title="Green"></button>
+            <button class="swatch" data-t="purple" style="background:#8b5cf6" title="Purple"></button>
+            <button class="swatch" data-t="black"  style="background:#16161c" title="Black"></button>
+          </div>
+        </div>
+        <button class="icon" id="histBtn" title="History">log</button>
+      </div>
+    </header>
+
+    <!-- екран -->
+    <section class="screen">
+      <div class="prev" id="prev"></div>
+      <div class="row">
+        <div class="main" id="main">0</div>
+        <button class="icon" id="del" title="Backspace">&#9003;</button>
+      </div>
+    </section>
+
+    <!-- історія -->
+    <div class="history" id="history">
+      <div>
+        <ul id="histList"></ul>
+        <button class="clear" id="histClear">clear history</button>
+      </div>
+    </div>
+
+    <!-- кнопки -->
+    <section class="keys" id="keys">
+      <button class="btn dim" data-k="AC">AC</button>
+      <button class="btn dim" data-k="()">( )</button>
+      <button class="btn op"  data-k="%">%</button>
+      <button class="btn op"  data-k="÷">÷</button>
+
+      <button class="btn" data-k="7">7</button>
+      <button class="btn" data-k="8">8</button>
+      <button class="btn" data-k="9">9</button>
+      <button class="btn op" data-k="×">×</button>
+
+      <button class="btn" data-k="4">4</button>
+      <button class="btn" data-k="5">5</button>
+      <button class="btn" data-k="6">6</button>
+      <button class="btn op" data-k="−">−</button>
+
+      <button class="btn" data-k="1">1</button>
+      <button class="btn" data-k="2">2</button>
+      <button class="btn" data-k="3">3</button>
+      <button class="btn op" data-k="+">+</button>
+
+      <button class="btn zero" data-k="0">0</button>
+      <button class="btn" data-k=".">.</button>
+      <button class="btn eq" data-k="=">=</button>
+    </section>
+
+    <footer>made by <b>CodeByOstap</b></footer>
+  </main>
+
+  <script>
+    // ===== 1. математика (без eval — безпечний розбір виразу) =====
+    // --- PARSER START
+    function calculate(src) {
+      let s = src.replace(/×/g, '*').replace(/÷/g, '/').replace(/−/g, '-');
+      // автоматично закриваємо дужки
+      const open = (s.match(/\(/g) || []).length - (s.match(/\)/g) || []).length;
+      s += ')'.repeat(Math.max(0, open));
+
+      let i = 0;
+      const peek = () => s[i];
+
+      function expr() {
+        let v = term();
+        while (peek() === '+' || peek() === '-') {
+          const o = s[i++];
+          const r = term();
+          v = o === '+' ? v + r : v - r;
+        }
+        return v;
+      }
+      function term() {
+        let v = unary();
+        while (peek() === '*' || peek() === '/') {
+          const o = s[i++];
+          const r = unary();
+          if (o === '/' && r === 0) throw new Error('div0');
+          v = o === '*' ? v * r : v / r;
+        }
+        return v;
+      }
+      function unary() {
+        if (peek() === '-') { i++; return -unary(); }
+        if (peek() === '+') { i++; return unary(); }
+        return percent();
+      }
+      function percent() {
+        let v = primary();
+        while (peek() === '%') { i++; v /= 100; }
+        return v;
+      }
+      function primary() {
+        if (peek() === '(') {
+          i++;
+          const v = expr();
+          if (peek() !== ')') throw new Error('paren');
+          i++;
+          return v;
+        }
+        const m = /^(\d+\.?\d*|\.\d+)/.exec(s.slice(i));
+        if (!m) throw new Error('number');
+        i += m[0].length;
+        return parseFloat(m[0]);
+      }
+
+      const result = expr();
+      if (i !== s.length || !isFinite(result)) throw new Error('syntax');
+      return String(parseFloat(result.toPrecision(12)));
+    }
+    // --- PARSER END
+
+    // ===== 2. стан калькулятора =====
+    const mainEl = document.getElementById('main');
+    const prevEl = document.getElementById('prev');
+    const histEl = document.getElementById('history');
+    const listEl = document.getElementById('histList');
+
+    let expr = '';          // те, що введено
+    let done = false;       // щойно натиснули "="
+    let failed = false;     // була помилка
+    let history = [];       // [{ expr, res }]
+
+    const OPS = ['+', '−', '×', '÷'];
+    const last = () => expr.slice(-1);
+    const isDigit = c => /\d/.test(c);
+
+    // ===== 3. екран =====
+    function render() {
+      const text = expr || '0';
+      mainEl.textContent = text;
+      mainEl.className = 'main' +
+        (text.length > 20 ? ' xs' : text.length > 13 ? ' s' : text.length > 9 ? ' m' : '');
+    }
+    function tick() {
+      mainEl.classList.remove('tick');
+      void mainEl.offsetWidth;          // перезапуск анімації
+      mainEl.classList.add('tick');
+    }
+
+    // ===== 4. дії кнопок =====
+    function press(k) {
+      if (failed) { expr = ''; prevEl.textContent = ''; failed = false; }
+
+      if (k === 'AC') { expr = ''; prevEl.textContent = ''; done = false; }
+      else if (/^\d$/.test(k)) addDigit(k);
+      else if (k === '.') addDot();
+      else if (OPS.includes(k)) addOp(k);
+      else if (k === '%') { if (isDigit(last()) || last() === ')') expr += '%'; }
+      else if (k === '()') addParen();
+      else if (k === '=') return equals();
+
+      done = false;
+      render(); tick();
+    }
+
+    function addDigit(d) {
+      if (done) expr = '';
+      if (last() === ')' || last() === '%') expr += '×';
+      // не даємо писати 007
+      if (/(^|[^\d.])0$/.test(expr)) expr = expr.slice(0, -1);
+      expr += d;
+    }
+    function addDot() {
+      if (done) expr = '';
+      const num = expr.split(/[^\d.]/).pop();
+      if (num.includes('.')) return;
+      if (!isDigit(last())) expr += last() === ')' || last() === '%' ? '×0' : '0';
+      expr += '.';
+    }
+    function addOp(op) {
+      if (expr === '' ) { if (op === '−') expr = '−'; return; }
+      if (last() === '(') { if (op === '−') expr += op; return; }
+      if (op === '−' && (last() === '×' || last() === '÷')) { expr += op; return; }
+      // замінюємо попередній оператор
+      while (OPS.includes(last())) expr = expr.slice(0, -1);
+      if (expr === '') { if (op === '−') expr = '−'; return; }
+      expr += op;
+    }
+    function addParen() {
+      const opens = (expr.match(/\(/g) || []).length;
+      const closes = (expr.match(/\)/g) || []).length;
+      const canClose = opens > closes && (isDigit(last()) || last() === ')' || last() === '%');
+      if (canClose) expr += ')';
+      else {
+        if (isDigit(last()) || last() === ')' || last() === '%') expr += '×';
+        expr += '(';
+      }
+    }
+
+    function equals() {
+      if (!expr) return;
+      while (OPS.includes(last())) expr = expr.slice(0, -1);   // "5+" -> "5"
+      const open = (expr.match(/\(/g) || []).length - (expr.match(/\)/g) || []).length;
+      expr += ')'.repeat(Math.max(0, open));                    // закриваємо дужки
+      try {
+        const res = calculate(expr);
+        prevEl.textContent = expr + ' =';
+        history.unshift({ expr, res: res.replace(/^-/, '−') });
+        history = history.slice(0, 20);
+        expr = res.replace(/^-/, '−');
+        done = true;
+        renderHistory();
+        render(); tick();
+      } catch (e) {
+        prevEl.textContent = expr + ' =';
+        mainEl.textContent = 'Error';
+        mainEl.className = 'main err shake';
+        expr = ''; failed = true;
+      }
+    }
+
+    function backspace() {
+      if (failed) { press('AC'); return; }
+      expr = expr.slice(0, -1);
+      done = false;
+      render();
+    }
+
+    // ===== 5. історія =====
+    function renderHistory() {
+      if (!history.length) {
+        listEl.innerHTML = '<li class="empty">empty</li>';
+        return;
+      }
+      listEl.innerHTML = '';
+      history.forEach(h => {
+        const li = document.createElement('li');
+        li.innerHTML = `${h.expr} = <b>${h.res}</b>`;
+        li.addEventListener('click', () => {
+          expr = h.res; done = true; failed = false;
+          prevEl.textContent = h.expr + ' =';
+          render(); tick();
+        });
+        listEl.appendChild(li);
+      });
+    }
+    document.getElementById('histBtn').addEventListener('click', () => histEl.classList.toggle('open'));
+    document.getElementById('histClear').addEventListener('click', () => { history = []; renderHistory(); });
+
+    // ===== 6. події =====
+    document.querySelectorAll('.btn').forEach((btn, i) => {
+      btn.style.setProperty('--i', i);                 // затримка появи кнопок
+      btn.addEventListener('click', () => press(btn.dataset.k));
+    });
+    document.getElementById('del').addEventListener('click', backspace);
+
+    // клавіатура
+    const KEYMAP = { '*': '×', '/': '÷', '-': '−', 'Enter': '=', '(': '()', ')': '()' };
+    document.addEventListener('keydown', e => {
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      if (e.key === 'Backspace') { backspace(); return; }
+      if (e.key === 'Escape') { picker.classList.remove('open'); press('AC'); return; }
+      const k = KEYMAP[e.key] || e.key;
+      const btn = document.querySelector(`.btn[data-k="${k}"]`);
+      if (!btn) return;
+      e.preventDefault();                              // щоб "/" не відкривав пошук
+      btn.classList.add('hit');
+      setTimeout(() => btn.classList.remove('hit'), 120);
+      press(k);
+    });
+
+    renderHistory();
+    render();
+
+
+    // ===== 7. теми (вибір кольору) =====
+    const root = document.documentElement;
+    const fade = document.getElementById('fade');
+    const picker = document.getElementById('picker');
+    const swatches = document.querySelectorAll('.swatch');
+    const THEMES = ['blue', 'pink', 'red', 'orange', 'yellow', 'green', 'purple', 'black'];
+
+    function applyTheme(t) {
+      root.dataset.theme = t;
+      swatches.forEach(s => s.classList.toggle('on', s.dataset.t === t));
+    }
+
+    // запам'ятовуємо вибір (якщо браузер дозволяє)
+    let saved = null;
+    try { saved = localStorage.getItem('calc-theme'); } catch (e) {}
+    applyTheme(THEMES.includes(saved) ? saved : 'blue');
+
+    swatches.forEach(sw => {
+      sw.addEventListener('click', () => {
+        const t = sw.dataset.t;
+        picker.classList.remove('open');
+        if (t === root.dataset.theme) return;
+
+        // накриваємо екран старим кольором, міняємо тему, плавно прибираємо
+        fade.style.transition = 'none';
+        fade.style.background = getComputedStyle(document.body).backgroundColor;
+        fade.style.opacity = 1;
+        root.classList.add('switching');
+        applyTheme(t);
+        try { localStorage.setItem('calc-theme', t); } catch (e) {}
+
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          fade.style.transition = 'opacity .4s ease';
+          fade.style.opacity = 0;
+        }));
+        setTimeout(() => root.classList.remove('switching'), 450);
+      });
+    });
+
+    // відкрити / закрити палітру
+    document.getElementById('palBtn').addEventListener('click', e => {
+      e.stopPropagation();
+      picker.classList.toggle('open');
+    });
+    document.addEventListener('click', e => {
+      if (!picker.contains(e.target)) picker.classList.remove('open');
+    });
+  </script>
+</body>
+</html>
